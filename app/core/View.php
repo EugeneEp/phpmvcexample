@@ -14,7 +14,7 @@ class View
 		$this->template = $params['controller'].'/'.$params['action'];
 	}
 
-	public function location(string $url){
+	public static function location(string $url){
 		header('Location: '.$url);
 		exit();
 	}

@@ -16,7 +16,7 @@ class Controller
 		$this->model = $this->getModel($params['controller']);
 	}
 
-	public function getModel(string $controller)
+	public function getModel(string $controller):?object
 	{
 		$path = "app\models\\".ucfirst($controller);
 		if(class_exists($path))

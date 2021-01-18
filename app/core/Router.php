@@ -7,9 +7,11 @@ class Router
 	
 	private $pathes = [];
 	private $params = [];
+	private $method;
 
 	public function __construct()
 	{
+		$this->method = $_SERVER['REQUEST_METHOD'];
 		$arr = require('app/config/routes.php');
 		foreach ($arr as $route => $params)
 			$this->add($route, $params);
@@ -24,9 +26,9 @@ class Router
 	public function match():bool
 	{
 		$url = trim($_SERVER['REQUEST_URI'], '/');
-		$url = str_replace(array('phpmvcexample/', 'phpmvcexample'), '', $url);
+		$url = $url == '' ? 'index' : $url;
 		foreach ($this->pathes as $route => $params){
-			if(preg_match($route, $url)){
+			if(strpos($route, $url)){
 				$this->params = $params;
 				return true;
 			}
@@ -41,6 +43,8 @@ class Router
 			if(class_exists($class)){
 				$method = $this->params['action'].'Action';
 				if(method_exists($class, $method)){
+					if($this->method != $this->params['method'])
+						View::Error(404, 'Method not allowed');
 					if($this->params['auth'] && !$_SESSION['id'])
 						View::Error(404);
 					$controller = new $class($this->params);
